@@ -4,7 +4,6 @@ import java.beans.XMLEncoder;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -13,7 +12,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import presenter.Properties;
@@ -52,7 +50,6 @@ public class Window extends BasicWindow {
 		
 		Text mazeXText = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		mazeXText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-//		mazeXText.setText(""+x);
 		    
 		Label mazeYSize = new Label(shell,SWT.NULL);
 		mazeYSize.setText("Maze  Y:");
@@ -60,7 +57,6 @@ public class Window extends BasicWindow {
 			
 		Text mazeYText = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		mazeYText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-//		mazeYText.setText(""+y);
     
 			 
 		Label mazeZSize = new Label(shell,SWT.NULL);
@@ -69,7 +65,6 @@ public class Window extends BasicWindow {
 				
 		Text mazeZText = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		mazeZText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-//		mazeZText.setText(""+z);
 		
 		Label numOfThreadsLabel = new Label(shell,SWT.NULL);
 		numOfThreadsLabel.setText("Number of Threads:");
@@ -77,7 +72,6 @@ public class Window extends BasicWindow {
 				
 		Text numOfThreadsText = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		numOfThreadsText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-//		numOfThreadsText.setText(""+numberOfThreads);
 		
 		Label generateAlgo = new Label(shell,SWT.NULL);
 		generateAlgo.setText("Maze generator:");
@@ -86,7 +80,6 @@ public class Window extends BasicWindow {
 		Combo generateAlgoButton = new Combo(shell, SWT.NONE);
 		generateAlgoButton.setItems(new String[]{"My Maze generator","Simple Maze generator"});
 		generateAlgoButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-//		generateAlgoButton.setText(generate);
 		
 		Label solveAlgo = new Label(shell,SWT.NULL);
 		solveAlgo.setText("Solve algorithem:");
@@ -95,7 +88,6 @@ public class Window extends BasicWindow {
 		Combo solveAlgoButton = new Combo(shell, SWT.NONE);
 		solveAlgoButton.setItems(new String[]{"BFS","A* Manhattan Distance","A* Air Distance"});
 		solveAlgoButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-//		solveAlgoButton.setText(solve);
 		
 		Label uiLabel = new Label(shell,SWT.NULL);
 		uiLabel.setText("User Interface:");
@@ -104,7 +96,6 @@ public class Window extends BasicWindow {
 		Combo uiButton = new Combo(shell, SWT.NONE);
 		uiButton.setItems(new String[]{"CLI","GUI"});
 		uiButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		//uiButton.setText(ui);
 		
 		Button saveButton=new Button(shell, SWT.PUSH);
 		saveButton.setText("Save");
@@ -113,20 +104,6 @@ public class Window extends BasicWindow {
 		Button cancelButton=new Button(shell, SWT.PUSH);
 		cancelButton.setText("Exit");
 		cancelButton.setLayoutData(new GridData(SWT.FILL, SWT.None, false, false, 1, 1));
-		
-//		Shell dialog = new Shell(shell, SWT.APPLICATION_MODAL
-//		        | SWT.DIALOG_TRIM);
-//		dialog.setText("Messege");
-//		dialog.setSize(150, 100);
-//		    
-//		Label label = new Label(dialog, SWT.NONE);
-//		label.setBounds(35, 5, 100, 20);
-//
-//		Button okButton = new Button(dialog, SWT.PUSH);
-//		okButton.setBounds(20, 35, 40, 25);
-//		okButton.setText("OK");
-//		okButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
-		
 		
 		Listener listener = new Listener() {
 			
@@ -160,7 +137,7 @@ public class Window extends BasicWindow {
 						isOk = false;
 					
 					if(!generateAlgoButton.getText().equals(""))
-				     	properties.setUi(generateAlgoButton.getText());
+				     	properties.setAlgorithemForCreate(generateAlgoButton.getText());
 					else
 						isOk = false;
 					
@@ -180,57 +157,14 @@ public class Window extends BasicWindow {
 						} catch (FileNotFoundException e1) {
 							e1.printStackTrace();
 						}
-						Shell dialog = new Shell(shell, SWT.APPLICATION_MODAL
-						        | SWT.DIALOG_TRIM);
-						dialog.setText("Messege");
-						dialog.setSize(150, 100);
-						    
-						Label label = new Label(dialog, SWT.NONE);
-						label.setText("Properties saved!");
-						label.setBounds(35, 5, 100, 20);
-
-						Button okButton = new Button(dialog, SWT.PUSH);
-						okButton.setBounds(20, 35, 40, 25);
-						okButton.setText("OK");
-						okButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
 						
-						okButton.addListener(SWT.Selection, new Listener() {
-							
-							@Override
-							public void handleEvent(Event arg0) {
-								dialog.close();
-								
-							}
-						});
-						
-						dialog.open();
+						DialogMessage dm = new DialogMessage(shell, "Properties saved!");
+						dm.open();
 						isOk = false;
 					}
-					else{
-						Shell dialog = new Shell(shell, SWT.APPLICATION_MODAL
-						        | SWT.DIALOG_TRIM);
-						dialog.setText("Messege");
-						dialog.setSize(150, 100);
-						    
-						Label label = new Label(dialog, SWT.NONE);
-						label.setText("Enter all values");
-						label.setBounds(35, 5, 100, 20);
-
-						Button okButton = new Button(dialog, SWT.PUSH);
-						okButton.setBounds(20, 35, 40, 25);
-						okButton.setText("OK");
-						okButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
-						
-						okButton.addListener(SWT.Selection, new Listener() {
-							
-							@Override
-							public void handleEvent(Event arg0) {
-								dialog.close();
-								
-							}
-						});
-						
-						dialog.open();
+					else{				
+						DialogMessage dm = new DialogMessage(shell, "Enter all values");
+						dm.open();
 
 						isOk = true;
 					}
@@ -244,8 +178,7 @@ public class Window extends BasicWindow {
 		
 		saveButton.addListener(SWT.Selection, listener);
 		cancelButton.addListener(SWT.Selection, listener);
-		
-		
+			
 		shell.pack();
 	}
 

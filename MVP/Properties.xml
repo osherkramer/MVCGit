@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <java version="1.8.0_60" class="java.beans.XMLDecoder">
  <object class="presenter.Properties">
-  <void property="XSize">
-   <int>9</int>
-  </void>
-  <void property="YSize">
-   <int>9</int>
-  </void>
-  <void property="ZSize">
-   <int>9</int>
-  </void>
   <void property="algorithemForSolution">
    <string>BFS</string>
   </void>
   <void property="ui">
-   <string>My Maze generator</string>
+   <string>CLI</string>
   </void>
  </object>
 </java>

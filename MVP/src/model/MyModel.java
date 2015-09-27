@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import algorithms.IO.MyCompressorOutputStream;
 import algorithms.IO.MyDecompressorInputStream;
@@ -52,6 +54,7 @@ public class MyModel extends CommonModel {
 		numberOfThreads = numberOfThread;
 		threadpool = Executors.newFixedThreadPool(numberOfThreads);  //////////////////
 		mazeFile = new HashMap<Maze3d,String>();
+		load();
 	}
 	
 	@Override
@@ -415,7 +418,7 @@ public class MyModel extends CommonModel {
 			setChanged();
 			notifyObservers(e.getMessage());
 		}
-		//save();
+		save();
 	}
 
 	@Override
@@ -424,9 +427,10 @@ public class MyModel extends CommonModel {
 		GZIPOutputStream GZIPOutput;
 		ObjectOutputStream out;
 		try {
-			fileSolutions = new FileOutputStream("solution.gz");
+			fileSolutions = new FileOutputStream("solution");
 			GZIPOutput = new GZIPOutputStream(fileSolutions);
 			out = new ObjectOutputStream(GZIPOutput);
+			out.writeObject(hashMaze);
 			out.writeObject(hashSolution);
 			out.flush();
 			out.close();
@@ -438,6 +442,32 @@ public class MyModel extends CommonModel {
 			setChanged();
 			notifyObservers("2. " + e.toString());
 		}		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void load() {
+		FileInputStream fileSolutions;
+		GZIPInputStream GZIPInput;
+		ObjectInputStream in;
+		try {
+			fileSolutions = new FileInputStream("solution");
+			GZIPInput = new GZIPInputStream(fileSolutions);
+			in = new ObjectInputStream(GZIPInput);
+			hashMaze = (HashMap<String, Maze3d>) in.readObject();
+			hashSolution = (HashMap<Maze3d, Solution<Position>>) in.readObject();
+			in.close();
+		} catch (FileNotFoundException e) {
+			setChanged();
+			notifyObservers("1. " + e.getMessage());
+		}
+		catch (IOException e) {
+			setChanged();
+			notifyObservers("2. " + e.toString());
+		}	
+		catch (ClassNotFoundException e) {
+		setChanged();
+		notifyObservers("3. " + e.toString());
+		}
 	}
 
 	public void setxSize(int xSize) {
