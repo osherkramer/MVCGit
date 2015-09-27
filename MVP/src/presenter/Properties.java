@@ -10,6 +10,8 @@ public class Properties implements Serializable {
 	int zSize;
 	int numberOfThreads;
 	String algorithemForSolution;
+	String algorithemForCreate;
+	String ui;
 	
 
 	public Properties() {
@@ -17,36 +19,61 @@ public class Properties implements Serializable {
 		this.ySize = 7;
 		this.zSize = 7;
 		this.numberOfThreads = 10;
-		algorithemForSolution = "AStar with ManhattanDistance";
+		this.algorithemForSolution = "A* Air Distance";
+		this.algorithemForCreate = "My Maze generator";
+		this.ui = "GUI";
+	}
+	
+	public String getAlgorithemForCreate() {
+		return algorithemForCreate;
 	}
 
 
-	public int getxSize() {
+
+	public void setAlgorithemForCreate(String algorithemForCreate) {
+		this.algorithemForCreate = algorithemForCreate;
+	}
+
+
+
+	public String getUi() {
+		return ui;
+	}
+
+
+
+	public void setUi(String ui) {
+		this.ui = ui;
+	}
+
+
+
+	public int getXSize() {
 		return xSize;
 	}
 
 
-	public void setxSize(int xSize) {
+	public void setXSize(int xSize) {
 		this.xSize = xSize;
 	}
 
 
-	public int getySize() {
+	public int getYSize() {
 		return ySize;
 	}
 
 
-	public void setySize(int ySize) {
+	public void setYSize(int ySize) {
 		this.ySize = ySize;
 	}
 
 
-	public int getzSize() {
+	public int getZSize() {
 		return zSize;
 	}
 
 
-	public void setzSize(int zSize) {
+	public void setZSize(int zSize) {
 		this.zSize = zSize;
 	}
 

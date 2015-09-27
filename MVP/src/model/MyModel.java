@@ -20,6 +20,7 @@ import algorithms.demo.MazeDomain;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.MyMaze3dGenerator;
 import algorithms.mazeGenerators.Position;
+import algorithms.mazeGenerators.SimpleMaze3dGenerator;
 import algorithms.search.AStar;
 import algorithms.search.BFS;
 import algorithms.search.MazeAirDistance;
@@ -36,13 +37,20 @@ import algorithms.search.State;
 public class MyModel extends CommonModel {
 
 	ExecutorService threadpool;
-	HashMap<Maze3d,String> mazeFile;	
+	HashMap<Maze3d,String> mazeFile;
+	int xSize;
+	int ySize;
+	int zSize;
+	int numberOfThreads;
+	String algorithemForSolution;
+	String algorithemForCreate;
 	
 	/**
 	 * Default Constructor of MyModel
 	 */
-	public MyModel() {
-		threadpool = Executors.newFixedThreadPool(10);  //////////////////
+	public MyModel(int numberOfThread) {
+		numberOfThreads = numberOfThread;
+		threadpool = Executors.newFixedThreadPool(numberOfThreads);  //////////////////
 		mazeFile = new HashMap<Maze3d,String>();
 	}
 	
@@ -52,7 +60,32 @@ public class MyModel extends CommonModel {
 
 			@Override
 			public Maze3d call() throws Exception {
-				Maze3d maze = new MyMaze3dGenerator().generate(x, y, z);
+				Maze3d maze;
+				if(algorithemForCreate.equals("My Maze generator"))
+					maze = new MyMaze3dGenerator().generate(x, y, z);
+				else
+					maze = new SimpleMaze3dGenerator().generate(x, y, z);
+				hashMaze.put(name,maze);
+				setChanged();
+				notifyObservers("Done: maze " +  name + " is ready");
+				return maze;
+			}
+		};
+		
+		threadpool.submit(callable);
+		
+	}
+	
+	public void generate(String name) {
+		Callable<Maze3d> callable = new Callable<Maze3d>() {
+
+			@Override
+			public Maze3d call() throws Exception {
+				Maze3d maze;
+				if(algorithemForCreate.equals("My Maze generator"))
+					maze = new MyMaze3dGenerator().generate(xSize, ySize, zSize);
+				else
+					maze = new SimpleMaze3dGenerator().generate(xSize, ySize, zSize);
 				hashMaze.put(name,maze);
 				setChanged();
 				notifyObservers("Done: maze " +  name + " is ready");
@@ -80,8 +113,9 @@ public class MyModel extends CommonModel {
 	@Override
 	public void createSolution(String str) {
 		String[] parm=str.split(" ");
+		boolean isDefault;
 		
-		if(parm.length != 2){
+		if(parm.length != 2 && parm.length != 1){
 			setChanged();
 			notifyObservers("Done: Invalid Command");
 			return;
@@ -95,12 +129,17 @@ public class MyModel extends CommonModel {
 			return;
 		}
 		
+		if(parm.length == 2)
+			isDefault = false;
+		else
+			isDefault = true;
+		
 		Callable<Solution<Position>> callable = new Callable<Solution<Position>>() {
 
 			@Override
 			public Solution<Position> call() throws Exception {
 				Solution<Position> solution = null;
-				if(parm[1].equalsIgnoreCase("bfs")){
+				if((isDefault && algorithemForSolution.equals("BFS")) || (!isDefault && parm[1].equalsIgnoreCase("bfs"))){
 					Maze3d maze = hashMaze.get(parm[0]);
 					if(maze != null){
 						BFS<Position> bfs = new BFS<Position>();
@@ -114,7 +153,7 @@ public class MyModel extends CommonModel {
 						notifyObservers("Done: Invalid name");
 					}
 				}
-				else if(parm[1].equalsIgnoreCase("ManhattanDistance")){
+				else if((isDefault && algorithemForSolution.equals("A* Manhattan Distance")) || (!isDefault && parm[1].equalsIgnoreCase("ManhattanDistance"))){
 					Maze3d maze = hashMaze.get(parm[0]);
 					if(maze != null){
 						AStar<Position> astarManhattanDistance = new AStar<Position>(new MazeManhattanDistance(new State<Position>(maze.getGoalPosition())));
@@ -128,7 +167,7 @@ public class MyModel extends CommonModel {
 						notifyObservers("Done: Invalid name");
 					}
 				}
-				else if(parm[1].equalsIgnoreCase("AirDistance")){
+				else if((isDefault && algorithemForSolution.equals("A* Air Distance")) || (!isDefault && parm[1].equalsIgnoreCase("AirDistance"))){
 					Maze3d maze = hashMaze.get(parm[0]);
 					if(maze != null){
 						AStar<Position> astarAirDistance = new AStar<Position>(new MazeAirDistance(new State<Position>(maze.getGoalPosition())));
@@ -376,7 +415,7 @@ public class MyModel extends CommonModel {
 			setChanged();
 			notifyObservers(e.getMessage());
 		}
-		save();
+		//save();
 	}
 
 	@Override
@@ -398,8 +437,28 @@ public class MyModel extends CommonModel {
 		catch (IOException e) {
 			setChanged();
 			notifyObservers("2. " + e.toString());
-		}
-		
-		
+		}		
 	}
+
+	public void setxSize(int xSize) {
+		this.xSize = xSize;
+	}
+
+	public void setySize(int ySize) {
+		this.ySize = ySize;
+	}
+
+	public void setzSize(int zSize) {
+		this.zSize = zSize;
+	}
+
+	public void setAlgorithemForSolution(String algorithemForSolution) {
+		this.algorithemForSolution = algorithemForSolution;
+	}
+
+	public void setAlgorithemForCreate(String algorithemForCreate) {
+		this.algorithemForCreate = algorithemForCreate;
+	}
+	
+	
 }

@@ -11,6 +11,7 @@ public class Presenter  implements Observer{
 	
 	View view;
 	Model model;
+	Properties properties;
 	HashMap<String,Command> hash;
 	
 	/**
@@ -21,9 +22,16 @@ public class Presenter  implements Observer{
 	 * @param view - get object from type View
 	 */
 	
-	public Presenter(Model model, View view) {
+	public Presenter(Model model, View view, Properties properties) {
 		this.model = model;
 		this.view = view;
+		this.properties = properties;
+		
+		model.setxSize(properties.getXSize());
+		model.setySize(properties.getYSize());
+		model.setzSize(properties.getZSize());
+		model.setAlgorithemForCreate(properties.getAlgorithemForCreate());
+		model.setAlgorithemForSolution(properties.getAlgorithemForSolution());
 		
 		this.hash = new HashMap<String,Command>();
 		hash.put("dir", new Dir(this));

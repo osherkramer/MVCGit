@@ -53,4 +53,16 @@ public abstract class CommonModel extends Observable implements Model {
 	
 	@Override
 	public abstract void save();
+	
+	public abstract void setxSize(int xSize);
+
+	public abstract void setySize(int ySize);
+
+	public abstract void setzSize(int zSize);
+
+	public abstract void setAlgorithemForSolution(String algorithemForSolution);
+
+	public abstract void setAlgorithemForCreate(String algorithemForCreate);
+	
+	public abstract void generate(String name);
 }

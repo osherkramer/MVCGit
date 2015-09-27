@@ -71,13 +71,20 @@ public interface Model {
 	 * @param name - get name of maze
 	 */
 	void mazeSizeFile(String name);
-	
-	/**
-	 * set the controller that work with the model
-	 * @param controller - get object from type Controller
-	 */
 
 	void exit();
 	
 	void save();
+	
+	void setxSize(int xSize);
+
+	void setySize(int ySize);
+
+	void setzSize(int zSize);
+
+	void setAlgorithemForSolution(String algorithemForSolution);
+
+	void setAlgorithemForCreate(String algorithemForCreate);
+	
+	void generate(String name);
 }
