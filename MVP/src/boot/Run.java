@@ -19,12 +19,21 @@ public class Run {
 	public static void main(String[] args) {
 		XMLDecoder d;
 		Properties properties = new Properties();
+		UserInterface ui = null;
+		
 		try {
 			d = new XMLDecoder(new BufferedInputStream(new FileInputStream("Properties.xml")));
 			properties = (Properties) d.readObject();
 			d.close();
-		} catch (FileNotFoundException e) {}
-		UserInterface ui = new CLI(new BufferedReader(new InputStreamReader(System.in)), new PrintWriter(System.out));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		if(properties.getUi().equals("CLI"))
+			ui = new CLI(new BufferedReader(new InputStreamReader(System.in)), new PrintWriter(System.out));
+		else if(properties.getUi().equals("GUI"))
+/*Change to GUI*/	ui = new CLI(new BufferedReader(new InputStreamReader(System.in)), new PrintWriter(System.out));
+		
 		MyModel model = new MyModel(properties.getNumberOfThreads());
 		MyView view = new MyView(ui);
 		Presenter presenter = new Presenter(model,view,properties);
