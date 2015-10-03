@@ -160,6 +160,8 @@ public class Window extends BasicWindow {
 						
 						DialogMessage dm = new DialogMessage(shell, "Properties saved!");
 						dm.open();
+						shell.dispose();
+						
 						isOk = false;
 					}
 					else{				
@@ -171,7 +173,7 @@ public class Window extends BasicWindow {
 						
 				}
 				else if(e.widget == cancelButton){
-					display.dispose();
+					shell.dispose();
 				}
 			}
 		};

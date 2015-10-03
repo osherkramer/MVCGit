@@ -15,8 +15,13 @@ import presenter.Presenter;
 public abstract class CommonModel extends Observable implements Model {
 	
 	Presenter presenter;
-	HashMap<String, Maze3d> hashMaze = new HashMap<String,Maze3d>();
-	HashMap<Maze3d, Solution<Position>> hashSolution = new HashMap<Maze3d, Solution<Position>>();
+	HashMap<String, Maze3d> hashMaze;
+	HashMap<Maze3d, Solution<Position>> hashSolution;
+	
+	public CommonModel() {
+		hashMaze = new HashMap<String,Maze3d>();
+		hashSolution = new HashMap<Maze3d, Solution<Position>>();
+	}
 
 	
 	@Override	

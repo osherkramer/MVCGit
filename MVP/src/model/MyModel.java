@@ -51,6 +51,7 @@ public class MyModel extends CommonModel {
 	 * Default Constructor of MyModel
 	 */
 	public MyModel(int numberOfThread) {
+		super();
 		numberOfThreads = numberOfThread;
 		threadpool = Executors.newFixedThreadPool(numberOfThreads);  //////////////////
 		mazeFile = new HashMap<Maze3d,String>();
@@ -109,7 +110,7 @@ public class MyModel extends CommonModel {
 		}
 		else{
 			setChanged();
-			notifyObservers(maze.toString()); 
+			notifyObservers(maze); 
 		}
 	}
 
@@ -427,20 +428,21 @@ public class MyModel extends CommonModel {
 		GZIPOutputStream GZIPOutput;
 		ObjectOutputStream out;
 		try {
-			fileSolutions = new FileOutputStream("solution");
+			fileSolutions = new FileOutputStream("solution.zip");
 			GZIPOutput = new GZIPOutputStream(fileSolutions);
 			out = new ObjectOutputStream(GZIPOutput);
 			out.writeObject(hashMaze);
 			out.writeObject(hashSolution);
+			out.writeObject(mazeFile);
 			out.flush();
 			out.close();
 		} catch (FileNotFoundException e) {
 			setChanged();
-			notifyObservers("1. " + e.getMessage());
+			notifyObservers(e.getMessage());
 		}
 		catch (IOException e) {
 			setChanged();
-			notifyObservers("2. " + e.toString());
+			notifyObservers(e.getMessage());
 		}		
 	}
 	
@@ -450,23 +452,24 @@ public class MyModel extends CommonModel {
 		GZIPInputStream GZIPInput;
 		ObjectInputStream in;
 		try {
-			fileSolutions = new FileInputStream("solution");
+			fileSolutions = new FileInputStream("solution.zip");
 			GZIPInput = new GZIPInputStream(fileSolutions);
 			in = new ObjectInputStream(GZIPInput);
 			hashMaze = (HashMap<String, Maze3d>) in.readObject();
 			hashSolution = (HashMap<Maze3d, Solution<Position>>) in.readObject();
+			mazeFile = (HashMap<Maze3d, String>) in.readObject();
 			in.close();
 		} catch (FileNotFoundException e) {
 			setChanged();
-			notifyObservers("1. " + e.getMessage());
+			notifyObservers(e.getMessage());
 		}
 		catch (IOException e) {
 			setChanged();
-			notifyObservers("2. " + e.toString());
+			notifyObservers(e.getMessage());
 		}	
 		catch (ClassNotFoundException e) {
 		setChanged();
-		notifyObservers("3. " + e.toString());
+		notifyObservers(e.toString());
 		}
 	}
 

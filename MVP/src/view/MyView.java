@@ -2,6 +2,7 @@ package view;
 
 import java.util.HashMap;
 
+import algorithms.mazeGenerators.Maze3d;
 import presenter.Command;
 
 /**
@@ -47,6 +48,11 @@ public class MyView extends CommonView {
 	public void notifyMessage(String str) {
 		setChanged();
 		notifyObservers(str);
+	}
+	
+	@Override
+	public void displayMaze(Maze3d maze){
+		ui.displayMaze(maze);
 	}
 
 }

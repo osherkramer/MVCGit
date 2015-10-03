@@ -1,9 +1,13 @@
 package presenter;
 
+import java.beans.XMLDecoder;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-
+import algorithms.mazeGenerators.Maze3d;
 import model.Model;
 import view.View;
 
@@ -67,6 +71,8 @@ public class Presenter  implements Observer{
 						com.doCommand("");
 					else	
 						com.doCommand(command[1]);
+				else if(command[0].equals("setProperties"))
+					setProperties(command[1]);
 				else
 					view.displayMessage("Error! Command not exist"); 			}
 			else if (((arg.getClass()).getName()).equals("java.lang.String")){
@@ -74,7 +80,7 @@ public class Presenter  implements Observer{
 				if(command.equals("exit")){
 					Command com = hash.get(command);
 					com.doCommand("");
-				}
+				}				
 				else
 					view.displayMessage("Error! Command not exist");	
 			}
@@ -120,8 +126,34 @@ public class Presenter  implements Observer{
 					view.displayMessage(s);
 				}
 			}
+			else if(((arg.getClass()).getName()).equals("algorithms.mazeGenerators.Maze3d")){
+				Maze3d maze = (Maze3d)arg;
+				view.displayMaze(maze);
+				
+			}
+				
 		}
 		
+	}
+	
+	private void setProperties(String path){
+		XMLDecoder d;
+		properties = new Properties();
+		
+		try {
+			d = new XMLDecoder(new BufferedInputStream(new FileInputStream(path)));
+			properties = (Properties) d.readObject();
+			d.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		model.setxSize(properties.getXSize());
+		model.setySize(properties.getYSize());
+		model.setzSize(properties.getZSize());
+		model.setAlgorithemForCreate(properties.getAlgorithemForCreate());
+		model.setAlgorithemForSolution(properties.getAlgorithemForSolution());
 	}
 
 }

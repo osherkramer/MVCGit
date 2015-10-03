@@ -11,6 +11,7 @@ import model.MyModel;
 import presenter.Presenter;
 import presenter.Properties;
 import view.CLI;
+import view.GUI;
 import view.MyView;
 import view.UserInterface;
 
@@ -32,7 +33,7 @@ public class Run {
 		if(properties.getUi().equals("CLI"))
 			ui = new CLI(new BufferedReader(new InputStreamReader(System.in)), new PrintWriter(System.out));
 		else if(properties.getUi().equals("GUI"))
-/*Change to GUI*/	ui = new CLI(new BufferedReader(new InputStreamReader(System.in)), new PrintWriter(System.out));
+			ui = new GUI("Maze 3D GAME", 800, 400);
 		
 		MyModel model = new MyModel(properties.getNumberOfThreads());
 		MyView view = new MyView(ui);
@@ -40,6 +41,7 @@ public class Run {
 		
 		model.addObserver(presenter);
 		view.addObserver(presenter);
+
 		
 		view.start();
 	}

@@ -67,7 +67,7 @@ public class Display extends CommonCommand {
 		if(solution == null)
 			presenter.setMessage("Not exist solution for " + name + " maze");
 		else
-			presenter.setMessage(solution.toString());
+			presenter.setMessage("Solution: \n" + solution.toString());
 	}
 	
 	

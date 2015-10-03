@@ -1,4 +1,4 @@
-package propertiesGUI;
+package view;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -27,7 +27,6 @@ public abstract class BasicWindow implements Runnable {
 				display.sleep();
 		
 		display.dispose();
-
 	}
 
 }

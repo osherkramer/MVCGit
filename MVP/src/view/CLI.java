@@ -5,13 +5,19 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
+import algorithms.mazeGenerators.Maze3d;
 import presenter.Command;
 /**
  * CLI Class - manage the Command Line Interface for the client
  */
 
-public class CLI extends CommonUserInterface{
+public class CLI implements UserInterface{
 	
+	BufferedReader in;
+	PrintWriter out;
+	View view;
+	boolean running;
+	HashMap<String, Command> hashCommand;
 	
 	/**
 	 * CLI Constructor - initialize the CLI object
@@ -19,7 +25,8 @@ public class CLI extends CommonUserInterface{
 	 * @param out - get PrintWriter
 	 */
 	public CLI(BufferedReader in, PrintWriter out){
-		super(in, out);
+		this.in = in;
+		this.out = out;
 	}
 	
 	/**
@@ -52,7 +59,17 @@ public class CLI extends CommonUserInterface{
 		out.flush();
 	}
 	
+	public void displayMaze(Maze3d maze){
+		out.println(maze.toString());
+	}
+	
 	public void setCommands(HashMap<String, Command> hashCommand){
 		this.hashCommand = hashCommand;
 	}
+	
+	@Override
+	public void setView(View view){ this.view = view; }
+
+	@Override
+	public void setRunning(boolean running){ this.running = running; }
 }

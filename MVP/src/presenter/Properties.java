@@ -95,9 +95,6 @@ public class Properties implements Serializable {
 
 	public void setAlgorithemForSolution(String algorithemForSolution) {
 		this.algorithemForSolution = algorithemForSolution;
-	}
-	
-	
-	
+	}	
 
 }

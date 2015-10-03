@@ -2,6 +2,7 @@ package view;
 
 import java.util.HashMap;
 
+import algorithms.mazeGenerators.Maze3d;
 import presenter.Command;
 
 /**
@@ -20,6 +21,8 @@ public interface View {
 	 * @param message - get string to view for the client
 	 */
 	void displayMessage(String message);
+	
+	void displayMaze(Maze3d maze);
 	
 	/**
 	 * set the HashMap that mapped between strings and commands

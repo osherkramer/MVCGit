@@ -3,6 +3,7 @@ package view;
 import java.util.HashMap;
 import java.util.Observable;
 
+import algorithms.mazeGenerators.Maze3d;
 import presenter.Command;
 
 /**
@@ -35,4 +36,7 @@ public abstract class CommonView extends Observable implements View {
 	
 	@Override
 	public abstract void notifyMessage(String str);
+	
+	@Override
+	public abstract void displayMaze(Maze3d maze);
 }
