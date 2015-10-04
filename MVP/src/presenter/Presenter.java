@@ -1,13 +1,11 @@
 package presenter;
 
-import java.beans.XMLDecoder;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import model.Model;
 import view.View;
 
@@ -26,16 +24,9 @@ public class Presenter  implements Observer{
 	 * @param view - get object from type View
 	 */
 	
-	public Presenter(Model model, View view, Properties properties) {
+	public Presenter(Model model, View view) {
 		this.model = model;
 		this.view = view;
-		this.properties = properties;
-		
-		model.setxSize(properties.getXSize());
-		model.setySize(properties.getYSize());
-		model.setzSize(properties.getZSize());
-		model.setAlgorithemForCreate(properties.getAlgorithemForCreate());
-		model.setAlgorithemForSolution(properties.getAlgorithemForSolution());
 		
 		this.hash = new HashMap<String,Command>();
 		hash.put("dir", new Dir(this));
@@ -55,7 +46,10 @@ public class Presenter  implements Observer{
 		this.view.displayMessage(message);
 
 	}
-	
+	public void setMessage(Solution<Position> sol) {
+		this.view.displaySolution(sol);
+
+	}
 	public Model getModel(){ return model; }
 	
 	public View getView(){ return view; }
@@ -69,10 +63,8 @@ public class Presenter  implements Observer{
 				if(com != null)
 					if(command.length == 1)
 						com.doCommand("");
-					else	
+					else
 						com.doCommand(command[1]);
-				else if(command[0].equals("setProperties"))
-					setProperties(command[1]);
 				else
 					view.displayMessage("Error! Command not exist"); 			}
 			else if (((arg.getClass()).getName()).equals("java.lang.String")){
@@ -84,6 +76,11 @@ public class Presenter  implements Observer{
 				else
 					view.displayMessage("Error! Command not exist");	
 			}
+			else if (((arg.getClass()).getName()).equals("presenter.Properties")){
+				Properties properties = (Properties) arg;
+				model.setProperties(properties);
+			}
+				
 			else
 				view.displayMessage("Error! Object not recognized");
 		}
@@ -129,31 +126,15 @@ public class Presenter  implements Observer{
 			else if(((arg.getClass()).getName()).equals("algorithms.mazeGenerators.Maze3d")){
 				Maze3d maze = (Maze3d)arg;
 				view.displayMaze(maze);
-				
+			}
+			else if(((arg.getClass()).getName()).equals("algorithms.search.Solution<Position>")){
+				@SuppressWarnings("unchecked")
+				Solution<Position> maze = (Solution<Position>) arg;
+				view.displaySolution(maze);
 			}
 				
 		}
 		
-	}
-	
-	private void setProperties(String path){
-		XMLDecoder d;
-		properties = new Properties();
-		
-		try {
-			d = new XMLDecoder(new BufferedInputStream(new FileInputStream(path)));
-			properties = (Properties) d.readObject();
-			d.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return;
-		}
-		
-		model.setxSize(properties.getXSize());
-		model.setySize(properties.getYSize());
-		model.setzSize(properties.getZSize());
-		model.setAlgorithemForCreate(properties.getAlgorithemForCreate());
-		model.setAlgorithemForSolution(properties.getAlgorithemForSolution());
 	}
 
 }

@@ -1,22 +1,26 @@
 package view;
 
+import java.beans.XMLDecoder;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-
 import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import presenter.Command;
+import presenter.Properties;
 import propertiesGUI.BasicWindow;
 
 public class GUI extends BasicWindow implements UserInterface {
@@ -35,7 +39,7 @@ public class GUI extends BasicWindow implements UserInterface {
 		shell.setLayout(new GridLayout(3, false));
 
 		Menu menuBar, fileMenu, gameMenu;
-		MenuItem fileMenuHeader, gameMenuHeader, saveItem, loadItem, generateItem,
+		MenuItem fileMenuHeader, gameMenuHeader, generateItem,
 			solveItem, openPropertiesItem, exitItem;
 		
 		menuBar = new Menu(shell,SWT.BAR);
@@ -60,78 +64,23 @@ public class GUI extends BasicWindow implements UserInterface {
 		
 		generateItem = new MenuItem(gameMenu, SWT.PUSH);
 		generateItem.setText("&Generate maze");
-		
-		
+			
 		solveItem = new MenuItem(gameMenu, SWT.PUSH);
 		solveItem.setText("&Solve maze");
-		
-		saveItem = new MenuItem(gameMenu, SWT.PUSH);
-		saveItem.setText("&Save maze");
-		
-		loadItem = new MenuItem(gameMenu, SWT.PUSH);
-		loadItem.setText("&Load maze");
 		
 		shell.setMenuBar(menuBar);
 				
 		mazeDisplay = new DisplayMaze3D(shell, SWT.BORDER);
 		mazeDisplay.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 7));
-		view.notifyMessage(("generate 3d maze maze"+numberMaze).split(" ",2));
+		view.notifyMessage(("generate 3d maze f13").split(" ",2));
 		mazeDisplay.draw();
-		
-		
-		Label label = new Label(shell, SWT.ABORT);
-		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
-				
-		Button forwardButton = new Button(shell,SWT.PUSH);
-		forwardButton.setImage(new Image(display,"resources/Forward.jpg"));
-		forwardButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER,false,false,2,1));
-	
-		Button leftButton = new Button(shell,SWT.PUSH);
-		leftButton.setImage(new Image(display,"resources/Left.jpg"));
-		leftButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER,false,false,1,1));
-		
-		Button rightButton = new Button(shell,SWT.PUSH);	
-		rightButton.setImage(new Image(display,"resources/Right.jpg"));
-		rightButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER,false,false,1,1));
-		
-		Button backwardButton = new Button(shell,SWT.PUSH);
-		backwardButton.setImage(new Image(display,"resources/Back.jpg"));
-		backwardButton.setLayoutData(new GridData(SWT.CENTER, SWT.UP,false,false,2,1));
-		
-		Button upButton = new Button(shell,SWT.PUSH);
-		upButton.setText("UP");
-		upButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER,false,false,1,1));
-		
-		Button downButton = new Button(shell,SWT.PUSH);
-		downButton.setText("DOWN");
-		downButton.setLayoutData(new GridData(SWT.DOWN, SWT.DOWN,false,false,1,1));
-		
+
 		Listener generateListenert = new Listener() {
 			
 			@Override
 			public void handleEvent(Event arg0) {
-				view.notifyMessage("generate 3d maze osh".split(" ",2));
+				view.notifyMessage("generate 3d maze f13".split(" ",2));
 				mazeDisplay.redraw();
-			}
-		};
-		
-		Listener moveListener = new Listener() {
-			
-			@Override
-			public void handleEvent(Event e)
-			{
-				if(e.widget==forwardButton || e.keyCode==38)
-					mazeDisplay.moveForward();
-				if(e.widget==leftButton|| e.keyCode==37)
-					mazeDisplay.moveLeft();
-				if(e.widget==rightButton|| e.keyCode==39)
-					mazeDisplay.moveRight();
-				if(e.widget==upButton|| e.keyCode==33)
-					mazeDisplay.moveUp();
-				if(e.widget==downButton|| e.keyCode==34)
-					mazeDisplay.moveDown();
-				if(e.widget==backwardButton|| e.keyCode==40)
-					mazeDisplay.moveBack();
 			}
 		};
 		
@@ -140,6 +89,7 @@ public class GUI extends BasicWindow implements UserInterface {
 			@Override
 			public void handleEvent(Event arg0) {
 				view.notifyMessage("exit");
+				mazeDisplay.setRunning(false);
 				shell.dispose();
 			}
 		};
@@ -159,21 +109,65 @@ public class GUI extends BasicWindow implements UserInterface {
 		        String[] filterExt = { "*.xml" };
 		        fd.setFilterExtensions(filterExt);
 		        String selected = fd.open();
-		        
-		        view.notifyMessage(("setProperties " + selected).split(" ", 2));
+		        if(selected != null){
+		        	XMLDecoder d;
+		    		Properties properties = new Properties();
+		    		try {
+		    			d = new XMLDecoder(new BufferedInputStream(new FileInputStream(selected)));
+		    			properties = (Properties) d.readObject();
+		    			d.close();
+		    		} catch (FileNotFoundException e) {
+		    			e.printStackTrace();
+		    		}
+		    		view.notifyMessage(properties);
+		        }
+		        	
+			}
+		};
+
+		Listener solveListtener =new Listener() {
+			
+			@Override
+			public void handleEvent(Event arg0) {
+				view.notifyMessage(("solve f13").split(" ", 2));			
 			}
 		};
 		
 		shell.addListener(SWT.Close, exitListener);
 		exitItem.addListener(SWT.Selection, exitListener);
 		generateItem.addListener(SWT.Selection, generateListenert);
-		backwardButton.addListener(SWT.Selection, moveListener);
-		leftButton.addListener(SWT.Selection, moveListener);
-		rightButton.addListener(SWT.Selection, moveListener);
-		forwardButton.addListener(SWT.Selection, moveListener);
-		upButton.addListener(SWT.Selection, moveListener);
-		downButton.addListener(SWT.Selection, moveListener);
 		openPropertiesItem.addListener(SWT.Selection, propertiesListener);
+		solveItem.addListener(SWT.Selection, solveListtener);
+		shell.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyReleased(KeyEvent e) {}
+			
+			@Override
+			public void keyPressed(KeyEvent key) {
+				switch(key.keyCode)
+				{
+				case SWT.ARROW_DOWN:
+					mazeDisplay.moveBack();
+					break;
+				case SWT.ARROW_UP:
+					mazeDisplay.moveForward();
+					break;
+				case SWT.ARROW_LEFT:
+					mazeDisplay.moveLeft();
+					break;
+				case SWT.ARROW_RIGHT:
+					mazeDisplay.moveRight();
+					break;
+				case SWT.PAGE_UP:
+					mazeDisplay.moveUp();
+					break;
+				case SWT.PAGE_DOWN:
+					mazeDisplay.moveDown();
+					break;
+				}	
+			}
+		});
 		
 				
 		shell.pack();
@@ -205,6 +199,10 @@ public class GUI extends BasicWindow implements UserInterface {
 	public void setCommands(HashMap<String, Command> hashCommand) {
 		this.hashCommand = hashCommand;
 		
+	}
+	public void displaySolution(Solution<Position> sol)
+	{
+		mazeDisplay.displaySolution(sol);		
 	}
 
 }

@@ -29,6 +29,7 @@ import algorithms.search.MazeAirDistance;
 import algorithms.search.MazeManhattanDistance;
 import algorithms.search.Solution;
 import algorithms.search.State;
+import presenter.Properties;
 
 /**
  * MyModel class extends CommonModel
@@ -46,18 +47,20 @@ public class MyModel extends CommonModel {
 	int numberOfThreads;
 	String algorithemForSolution;
 	String algorithemForCreate;
+	Properties properties;
 	
 	/**
 	 * Default Constructor of MyModel
 	 */
-	public MyModel(int numberOfThread) {
+	public MyModel(Properties properties) {
 		super();
-		numberOfThreads = numberOfThread;
-		threadpool = Executors.newFixedThreadPool(numberOfThreads);  //////////////////
+		this.properties = properties;
+		setProperties(properties);
+		threadpool = Executors.newFixedThreadPool(numberOfThreads);
 		mazeFile = new HashMap<Maze3d,String>();
 		load();
 	}
-	
+
 	@Override
 	public void generate(String name, int x, int y, int z) {
 		Callable<Maze3d> callable = new Callable<Maze3d>() {
@@ -410,7 +413,7 @@ public class MyModel extends CommonModel {
 		
 	}
 
-	@Override///////////////////////////////
+	@Override
 	public void exit(){
 		threadpool.shutdown();
 		try {
@@ -491,6 +494,27 @@ public class MyModel extends CommonModel {
 
 	public void setAlgorithemForCreate(String algorithemForCreate) {
 		this.algorithemForCreate = algorithemForCreate;
+	}
+		
+	public int getNumberOfThreads() {
+		return numberOfThreads;
+	}
+
+	public void setNumberOfThreads(int numberOfThreads) {
+		this.numberOfThreads = numberOfThreads;
+	}
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+		
+		setxSize(properties.getXSize());
+		setySize(properties.getYSize());
+		setzSize(properties.getZSize());
+		setAlgorithemForCreate(properties.getAlgorithemForCreate());
+		setAlgorithemForSolution(properties.getAlgorithemForSolution());
+		setNumberOfThreads(properties.getNumberOfThreads());
+		threadpool = Executors.newFixedThreadPool(numberOfThreads);
+		
 	}
 	
 	

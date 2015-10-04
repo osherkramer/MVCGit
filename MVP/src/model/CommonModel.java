@@ -7,6 +7,7 @@ import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import presenter.Presenter;
+import presenter.Properties;
 /**
  * CommonModel implements Model interface
  * abstract class of the model
@@ -58,6 +59,9 @@ public abstract class CommonModel extends Observable implements Model {
 	
 	@Override
 	public abstract void save();
+	
+	@Override
+	public abstract void setProperties(Properties properties);
 	
 	public abstract void setxSize(int xSize);
 

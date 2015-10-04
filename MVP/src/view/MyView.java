@@ -3,7 +3,10 @@ package view;
 import java.util.HashMap;
 
 import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import presenter.Command;
+import presenter.Properties;
 
 /**
  * MyView - extands CommonView and manage the size of the client - the view
@@ -52,7 +55,17 @@ public class MyView extends CommonView {
 	
 	@Override
 	public void displayMaze(Maze3d maze){
-		ui.displayMaze(maze);
+		ui.displayMaze(maze);	
 	}
-
+	@Override
+	public void displaySolution(Solution<Position> sol)
+	{
+		ui.displaySolution(sol);
+	}
+	
+	@Override
+	public void notifyMessage(Properties properties){
+		setChanged();
+		notifyObservers(properties);
+	}
 }

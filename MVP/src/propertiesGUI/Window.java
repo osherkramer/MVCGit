@@ -111,42 +111,72 @@ public class Window extends BasicWindow {
 			public void handleEvent(Event e) {
 				if(e.widget == saveButton){
 					boolean isOk = true;
-					if(!mazeXText.getText().equals(""))
-						properties.setXSize(Integer.parseInt(mazeXText.getText()));
+					boolean sizeIsOk = true;
+					boolean generateIsOk = true;
+					boolean uiIsOk = true;
+					boolean solveIsOk = true;
+					boolean isThreadOk = true;
+					if(!mazeXText.getText().equals("")){
+						if(Integer.parseInt(mazeXText.getText()) > 2)
+							properties.setXSize(Integer.parseInt(mazeXText.getText()));
+						else
+							sizeIsOk = false;
+					}	
 					else
 						isOk = false;
 						
 					if(!mazeYText.getText().equals(""))
-						properties.setYSize(Integer.parseInt(mazeYText.getText()));
+						if (Integer.parseInt(mazeYText.getText()) > 2)
+							properties.setYSize(Integer.parseInt(mazeYText.getText()));
+						else
+							sizeIsOk = false;
 					else
 						isOk = false;
 					
 					if(!mazeZText.getText().equals(""))
-						properties.setZSize(Integer.parseInt(mazeZText.getText()));
+						if(Integer.parseInt(mazeZText.getText()) > 2)
+							properties.setZSize(Integer.parseInt(mazeZText.getText()));
+						else
+							sizeIsOk = false;
 					else
 						isOk = false;
 					
 					if(!numOfThreadsText.getText().equals(""))
-					  properties.setNumberOfThreads(Integer.parseInt(numOfThreadsText.getText()));
+						if(Integer.parseInt(numOfThreadsText.getText()) > 0)
+							properties.setNumberOfThreads(Integer.parseInt(numOfThreadsText.getText()));
+						else
+							isThreadOk = false;
 					else
 						isOk = false;
 					
 					if(!uiButton.getText().equals(""))
-				     	properties.setUi(uiButton.getText());
+						if(uiButton.getText().equals("CLI") || uiButton.getText().equals("GUI"))
+							properties.setUi(uiButton.getText());
+						else
+							uiIsOk = false;
 					else
 						isOk = false;
 					
 					if(!generateAlgoButton.getText().equals(""))
-				     	properties.setAlgorithemForCreate(generateAlgoButton.getText());
+						if(generateAlgoButton.getText().equals("My Maze generator") 
+								|| generateAlgoButton.getText().equals("Simple Maze generator"))
+								properties.setAlgorithemForCreate(generateAlgoButton.getText());
+						else
+							generateIsOk = false;
 					else
 						isOk = false;
 					
 					if(!solveAlgoButton.getText().equals(""))
-					     properties.setAlgorithemForSolution(solveAlgoButton.getText());
+						if(solveAlgoButton.getText().equals("BFS") 
+								|| solveAlgoButton.getText().equals("A* Manhattan Distance") 
+								|| solveAlgoButton.getText().equals("A* Air Distance"))
+							properties.setAlgorithemForSolution(solveAlgoButton.getText());
+						else
+							solveIsOk = false;
 					else
 						isOk = false;
 					
-					if(isOk){
+					if(isOk && sizeIsOk && solveIsOk && generateIsOk && uiIsOk && isThreadOk){
 						XMLEncoder encoder;
 						try {
 							encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("Properties.xml")));
@@ -163,6 +193,26 @@ public class Window extends BasicWindow {
 						shell.dispose();
 						
 						isOk = false;
+					}
+					else if(!sizeIsOk){
+						DialogMessage dm = new DialogMessage(shell, SWT.CURSOR_SIZEE ,"X/Y/Z < 3");
+						dm.open();
+					}
+					else if(!isThreadOk){
+						DialogMessage dm = new DialogMessage(shell, SWT.CURSOR_SIZEE ,"Threads < 1");
+						dm.open();
+					}
+					else if(!generateIsOk){
+						DialogMessage dm = new DialogMessage(shell, SWT.CURSOR_SIZEE ,"Invalid Generate");
+						dm.open();
+					}
+					else if(!solveIsOk){
+						DialogMessage dm = new DialogMessage(shell, SWT.CURSOR_SIZEE ,"Invalid Solve");
+						dm.open();
+					}
+					else if(!uiIsOk){
+						DialogMessage dm = new DialogMessage(shell, SWT.CURSOR_SIZEE ,"Invalid UI");
+						dm.open();
 					}
 					else{				
 						DialogMessage dm = new DialogMessage(shell, "Enter all values");

@@ -2,6 +2,7 @@ package model;
 
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
+import presenter.Properties;
 
 /**
  * Model Interface - set the functional of the model side
@@ -87,4 +88,6 @@ public interface Model {
 	void setAlgorithemForCreate(String algorithemForCreate);
 	
 	void generate(String name);
+	
+	void setProperties(Properties properties);
 }

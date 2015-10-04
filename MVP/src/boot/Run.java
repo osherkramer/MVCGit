@@ -35,9 +35,9 @@ public class Run {
 		else if(properties.getUi().equals("GUI"))
 			ui = new GUI("Maze 3D GAME", 800, 400);
 		
-		MyModel model = new MyModel(properties.getNumberOfThreads());
+		MyModel model = new MyModel(properties);
 		MyView view = new MyView(ui);
-		Presenter presenter = new Presenter(model,view,properties);
+		Presenter presenter = new Presenter(model,view);
 		
 		model.addObserver(presenter);
 		view.addObserver(presenter);

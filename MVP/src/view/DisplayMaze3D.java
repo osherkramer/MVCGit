@@ -3,10 +3,11 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Pattern;
 import org.eclipse.swt.widgets.Composite;
 
 import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 
 
 public class DisplayMaze3D extends DisplayMaze {
@@ -18,9 +19,12 @@ public class DisplayMaze3D extends DisplayMaze {
 	int exitX;
 	int exitY;
 	int exitZ;
+	boolean running;
+	Thread mainThread;
 
 	public DisplayMaze3D(Composite parent, int style) {
 		super(parent, style);
+		running = true;
 	}	
 	
 	public Maze3d getMaze() {
@@ -43,18 +47,19 @@ public class DisplayMaze3D extends DisplayMaze {
 		Image image = new Image(getDisplay(), "resources/wall.jpg");
 		Image charachter = new Image(getDisplay(), "resources/Stewie_Griffin.jpg");
 		Image endGame = new Image(getDisplay(), "resources/EndGame.jpg");
+		Image up = new Image(getDisplay(), "resources/Up.jpg");
+		Image down = new Image(getDisplay(), "resources/Down.jpg");
+		Image upAndDown = new Image(getDisplay(), "resources/UpDown.jpg");
 		setBackground(new Color(null, 192, 192, 192));
+		
+		setBackgroundImage(image);
 		
     	addPaintListener(new PaintListener() {
 			
 			@Override
 			public void paintControl(PaintEvent e) {
-				   e.gc.setForeground(new Color(null,0,0,0));
-				   e.gc.setBackground(new Color(null,0,0,0));
-				   
-				   Pattern pattern = new Pattern(getDisplay(), image);
-
-				    e.gc.setBackgroundPattern(pattern);
+				   e.gc.setForeground(new Color(null,255,255,255));
+				   e.gc.setBackground(new Color(null,255,255,255));
 
 				   int width=getSize().x;
 				   int height=getSize().y;
@@ -70,13 +75,17 @@ public class DisplayMaze3D extends DisplayMaze {
 						      for(int j=0;j<maze.getZ();j++){
 						          int x=j*w;
 						          int y=i*h;
-						          if(!maze.haveSpace(characterX, i, j))
+						          if(maze.haveSpace(characterX, i, j))
 						              e.gc.fillRectangle(x,y,w,h);
+						          if(maze.haveSpace(characterX, i, j) && maze.haveSpace(characterX + 1, i,j) && maze.haveSpace(characterX - 1, i,j))
+						        	  e.gc.drawImage(upAndDown, x, y);
+						          else if(maze.haveSpace(characterX, i, j) && maze.haveSpace(characterX + 1, i,j))
+						        	  e.gc.drawImage(up, x, y);
+						          else if(maze.haveSpace(characterX, i, j) && maze.haveSpace(characterX - 1, i,j))
+						        	  e.gc.drawImage(down, x, y);
 						          if(j == characterZ && i == characterY)
 						        	  e.gc.drawImage(charachter, x, y);
-
-						      }
-					
+						      }		
 			}
 				  
 		});
@@ -100,12 +109,6 @@ public class DisplayMaze3D extends DisplayMaze {
 				}
 			});
 		}
-	}
-
-	@Override
-	public void setCharacterPosition(int row, int col) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -162,5 +165,36 @@ public class DisplayMaze3D extends DisplayMaze {
 		moveCharacter(x, y, z);
 	}
 	
+	public void displaySolution(Solution<Position> sol)
+	{
+		Thread mainThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				String[] position=sol.toString().split(" ");
+				int x,y,z;
+			
+				for(int i=position.length-1; running && i>=0; i--)
+				{
+					String[] numbers = position[i].split(",");
+					x=Integer.parseInt(numbers[0].substring(1));
+					y=Integer.parseInt(numbers[1]);
+					z=Integer.parseInt(numbers[2].substring(0, numbers[2].length()-1));
+					moveCharacter(x,y,z);
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		mainThread.start();
+	}
 	
+	public void setRunning(boolean running){ 
+		this.running = running;	
+	}
 }
+

@@ -14,8 +14,6 @@ public abstract class DisplayMaze extends Canvas {
 	public void setMazeData(int[][] mazeData){
 		this.mazeData=mazeData;
 	}
-	
-	public abstract  void setCharacterPosition(int row,int col);
 
 	public abstract void moveUp();
 

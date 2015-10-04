@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Observable;
 
 import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import presenter.Command;
+import presenter.Properties;
 
 /**
  * CommonView - implements View
@@ -18,6 +21,9 @@ public abstract class CommonView extends Observable implements View {
 	public CommonView(UserInterface ui) {
 		this.ui = ui;
 	}
+	@Override
+	public abstract void displaySolution(Solution<Position> sol);
+
 	
 	@Override
 	public abstract void exit();
@@ -39,4 +45,7 @@ public abstract class CommonView extends Observable implements View {
 	
 	@Override
 	public abstract void displayMaze(Maze3d maze);
+	
+	@Override
+	public abstract void notifyMessage(Properties properties);
 }

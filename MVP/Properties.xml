@@ -5,10 +5,10 @@
    <int>3</int>
   </void>
   <void property="YSize">
-   <int>19</int>
+   <int>3</int>
   </void>
   <void property="ZSize">
-   <int>19</int>
+   <int>3</int>
   </void>
   <void property="algorithemForSolution">
    <string>BFS</string>

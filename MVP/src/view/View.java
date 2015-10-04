@@ -3,7 +3,10 @@ package view;
 import java.util.HashMap;
 
 import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import presenter.Command;
+import presenter.Properties;
 
 /**
  * View Interface
@@ -24,6 +27,8 @@ public interface View {
 	
 	void displayMaze(Maze3d maze);
 	
+	void displaySolution(Solution<Position> sol);
+	
 	/**
 	 * set the HashMap that mapped between strings and commands
 	 * @param hashCommand
@@ -38,4 +43,6 @@ public interface View {
 	void notifyMessage(String[] str);
 	
 	void notifyMessage(String str);
+
+	void notifyMessage(Properties properties);
 }
