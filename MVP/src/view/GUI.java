@@ -22,6 +22,7 @@ import algorithms.search.Solution;
 import presenter.Command;
 import presenter.Properties;
 import propertiesGUI.BasicWindow;
+import propertiesGUI.DialogMessage;
 
 public class GUI extends BasicWindow implements UserInterface {
 	View view;
@@ -129,7 +130,9 @@ public class GUI extends BasicWindow implements UserInterface {
 			
 			@Override
 			public void handleEvent(Event arg0) {
-				view.notifyMessage(("solve f13").split(" ", 2));			
+				view.notifyMessage(("solve f13 " + mazeDisplay.getCharacterX() + " "
+						+ mazeDisplay.getCharacterY() + " " +
+						mazeDisplay.getCharacterZ()).split(" ", 2));			
 			}
 		};
 		
@@ -168,9 +171,6 @@ public class GUI extends BasicWindow implements UserInterface {
 				}	
 			}
 		});
-		
-				
-		shell.pack();
 
 	}
 
@@ -188,7 +188,10 @@ public class GUI extends BasicWindow implements UserInterface {
 	}
 
 	@Override
-	public void displayMessage(String messege) {}
+	public void displayMessage(String messege) {
+		DialogMessage dm = new DialogMessage(shell, messege);
+		dm.open();
+	}
 	
 	public void displayMaze(Maze3d maze) {
 		mazeDisplay.setMaze(maze);

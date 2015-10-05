@@ -1,4 +1,7 @@
 package view;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -20,11 +23,12 @@ public class DisplayMaze3D extends DisplayMaze {
 	int exitY;
 	int exitZ;
 	boolean running;
-	Thread mainThread;
+	ExecutorService threadSolve;
 
 	public DisplayMaze3D(Composite parent, int style) {
 		super(parent, style);
 		running = true;
+		threadSolve = Executors.newFixedThreadPool(1);
 	}	
 	
 	public Maze3d getMaze() {
@@ -45,7 +49,7 @@ public class DisplayMaze3D extends DisplayMaze {
 
 	public void draw(){
 		Image image = new Image(getDisplay(), "resources/wall.jpg");
-		Image charachter = new Image(getDisplay(), "resources/Stewie_Griffin.jpg");
+		Image charachter = new Image(getDisplay(), "resources/Stewie_Griffin.png");
 		Image endGame = new Image(getDisplay(), "resources/EndGame.jpg");
 		Image up = new Image(getDisplay(), "resources/Up.jpg");
 		Image down = new Image(getDisplay(), "resources/Down.jpg");
@@ -68,7 +72,7 @@ public class DisplayMaze3D extends DisplayMaze {
 				   int h=height/maze.getY();
 				   
 				   if(characterX == exitX && characterZ == exitZ && characterY == exitY)
-			        	  e.gc.drawImage(endGame, width/4, height/4);
+					   e.gc.drawImage(endGame, 0, 0, 280, 296, 0, 0, getSize().x, getSize().y);
 
 				   else
 					   for(int i=0;i<maze.getY();i++)
@@ -78,13 +82,14 @@ public class DisplayMaze3D extends DisplayMaze {
 						          if(maze.haveSpace(characterX, i, j))
 						              e.gc.fillRectangle(x,y,w,h);
 						          if(maze.haveSpace(characterX, i, j) && maze.haveSpace(characterX + 1, i,j) && maze.haveSpace(characterX - 1, i,j))
-						        	  e.gc.drawImage(upAndDown, x, y);
+						        	  e.gc.drawImage(upAndDown, 0, 0, 39,38 , x, y, w, h);
 						          else if(maze.haveSpace(characterX, i, j) && maze.haveSpace(characterX + 1, i,j))
-						        	  e.gc.drawImage(up, x, y);
+						        	  e.gc.drawImage(up, 0, 0, 38,37 , x, y, w, h);
 						          else if(maze.haveSpace(characterX, i, j) && maze.haveSpace(characterX - 1, i,j))
-						        	  e.gc.drawImage(down, x, y);
-						          if(j == characterZ && i == characterY)
-						        	  e.gc.drawImage(charachter, x, y);
+						        	  e.gc.drawImage(down, 0, 0, 37,38 , x, y, w, h);
+						          if(j == characterZ && i == characterY){
+						        	  e.gc.drawImage(charachter, 0, 0, 242,273 , x, y, w, h);
+						          }
 						      }		
 			}
 				  
@@ -167,7 +172,8 @@ public class DisplayMaze3D extends DisplayMaze {
 	
 	public void displaySolution(Solution<Position> sol)
 	{
-		Thread mainThread = new Thread(new Runnable() {
+		this.running = true;
+		threadSolve.execute(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -182,19 +188,33 @@ public class DisplayMaze3D extends DisplayMaze {
 					z=Integer.parseInt(numbers[2].substring(0, numbers[2].length()-1));
 					moveCharacter(x,y,z);
 					try {
-						Thread.sleep(200);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}
 		});
-		mainThread.start();
 	}
 	
 	public void setRunning(boolean running){ 
-		this.running = running;	
+		this.running = running;
+		if(!running)
+			threadSolve.shutdown();
+		
 	}
+
+	public int getCharacterX() {
+		return characterX;
+	}
+
+	public int getCharacterY() {
+		return characterY;
+	}
+
+	public int getCharacterZ() {
+		return characterZ;
+	}
+	
 }
 

@@ -33,7 +33,7 @@ public class Run {
 		if(properties.getUi().equals("CLI"))
 			ui = new CLI(new BufferedReader(new InputStreamReader(System.in)), new PrintWriter(System.out));
 		else if(properties.getUi().equals("GUI"))
-			ui = new GUI("Maze 3D GAME", 800, 400);
+			ui = new GUI("Maze 3D GAME", 1200, 700);
 		
 		MyModel model = new MyModel(properties);
 		MyView view = new MyView(ui);

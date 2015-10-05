@@ -121,8 +121,8 @@ public class MyModel extends CommonModel {
 	public void createSolution(String str) {
 		String[] parm=str.split(" ");
 		boolean isDefault;
-		
-		if(parm.length != 2 && parm.length != 1){
+		boolean notStartPositon;
+		if(parm.length != 2 && parm.length != 1 && parm.length != 4){
 			setChanged();
 			notifyObservers("Done: Invalid Command");
 			return;
@@ -140,6 +140,12 @@ public class MyModel extends CommonModel {
 			isDefault = false;
 		else
 			isDefault = true;
+
+		if(parm.length == 4){
+			notStartPositon = true;
+		}
+		else
+			notStartPositon = false;
 		
 		Callable<Solution<Position>> callable = new Callable<Solution<Position>>() {
 
@@ -150,7 +156,14 @@ public class MyModel extends CommonModel {
 					Maze3d maze = hashMaze.get(parm[0]);
 					if(maze != null){
 						BFS<Position> bfs = new BFS<Position>();
-						solution = bfs.search(new MazeDomain(maze));
+						MazeDomain md = new MazeDomain(maze);
+						if(notStartPositon){
+							int x = Integer.parseInt(parm[1]);
+							int y = Integer.parseInt(parm[2]);
+							int z = Integer.parseInt(parm[3]);
+							md.setStartState(new State<Position>(new Position(x,y,z)));
+						}
+						solution = bfs.search(md);
 						hashSolution.put(hashMaze.get(parm[0]), solution);
 						setChanged();
 						notifyObservers("Done: solution for " + parm[0] + " is ready");
@@ -164,7 +177,14 @@ public class MyModel extends CommonModel {
 					Maze3d maze = hashMaze.get(parm[0]);
 					if(maze != null){
 						AStar<Position> astarManhattanDistance = new AStar<Position>(new MazeManhattanDistance(new State<Position>(maze.getGoalPosition())));
-						solution = astarManhattanDistance.search(new MazeDomain(maze));
+						MazeDomain md = new MazeDomain(maze);
+						if(notStartPositon){
+							int x = Integer.parseInt(parm[1]);
+							int y = Integer.parseInt(parm[2]);
+							int z = Integer.parseInt(parm[3]);
+							md.setStartState(new State<Position>(new Position(x,y,z)));
+						}
+						solution = astarManhattanDistance.search(md);
 						hashSolution.put(hashMaze.get(parm[0]), solution);
 						setChanged();
 						notifyObservers("Done: solution for " + parm[0] + " is ready");
@@ -178,7 +198,14 @@ public class MyModel extends CommonModel {
 					Maze3d maze = hashMaze.get(parm[0]);
 					if(maze != null){
 						AStar<Position> astarAirDistance = new AStar<Position>(new MazeAirDistance(new State<Position>(maze.getGoalPosition())));
-						solution = astarAirDistance.search(new MazeDomain(maze));
+						MazeDomain md = new MazeDomain(maze);
+						if(notStartPositon){
+							int x = Integer.parseInt(parm[1]);
+							int y = Integer.parseInt(parm[2]);
+							int z = Integer.parseInt(parm[3]);
+							md.setStartState(new State<Position>(new Position(x,y,z)));
+						}
+						solution = astarAirDistance.search(md);
 						hashSolution.put(hashMaze.get(parm[0]), solution);
 						setChanged();
 						notifyObservers("Done: solution for " + parm[0] + " is ready");

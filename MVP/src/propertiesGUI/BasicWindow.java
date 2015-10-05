@@ -11,8 +11,9 @@ public abstract class BasicWindow implements Runnable {
 	public BasicWindow(String title, int width, int height){
 		display = new Display();
 		shell = new Shell(display);
-		shell.setSize(width, height);
+		shell.setSize(width,height);
 		shell.setText(title);
+		
 	}
 	
 	public abstract void initWidgets();

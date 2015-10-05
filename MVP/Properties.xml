@@ -2,16 +2,13 @@
 <java version="1.8.0_60" class="java.beans.XMLDecoder">
  <object class="presenter.Properties">
   <void property="XSize">
-   <int>3</int>
+   <int>5</int>
   </void>
   <void property="YSize">
-   <int>3</int>
+   <int>11</int>
   </void>
   <void property="ZSize">
-   <int>3</int>
-  </void>
-  <void property="algorithemForSolution">
-   <string>BFS</string>
+   <int>11</int>
   </void>
  </object>
 </java>
