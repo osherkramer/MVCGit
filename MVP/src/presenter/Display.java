@@ -24,8 +24,13 @@ public class Display extends CommonCommand {
 		
 		if(parm[0].equalsIgnoreCase("cross"))
 			cross(str);
-		else if(parm[0].equalsIgnoreCase("solution"))
-			solution(parm[1]);
+		else if(parm[0].equalsIgnoreCase("solution")){
+			if(parm.length == 2)
+				solution(parm[1]);
+			else
+				solution("");
+		}
+			
 		else if(parm.length == 1)
 			defaultDisplay(parm[0]);
 		else
@@ -40,7 +45,7 @@ public class Display extends CommonCommand {
 	 */
 	private void cross(String arg){
 		String[] parm = arg.split(" ");
-		if(parm.length != 7){
+		if(parm.length != 7 && parm.length != 5){
 			presenter.setMessage("Invalid Command");
 			return;
 		}
@@ -53,9 +58,12 @@ public class Display extends CommonCommand {
 			presenter.setMessage("Invalid index");
 			return;
 		}
-		String name = parm[6];
-		
-		presenter.getModel().crossBy(by, index, name);
+		if(parm.length == 7){
+			String name = parm[6];	
+			presenter.getModel().crossBy(by, index, name);
+		}
+		else
+			presenter.getModel().crossBy(by, index, "");	
 	}
 	
 	/**
@@ -63,13 +71,17 @@ public class Display extends CommonCommand {
 	 * @param arg - get the name of the maze
 	 */
 	private void solution(String name){
-		Solution<Position>	solution = presenter.getModel().getSolution(name);
-		if(solution == null)
-			presenter.setMessage("Not exist solution for " + name + " maze");
+		Solution<Position>	solution;
+		if(name.length() != 0){
+			solution = presenter.getModel().getSolution(name);
+			if(solution == null)
+				presenter.setMessage("Not exist solution for " + name + " maze");
+			else
+				presenter.setMessage(solution);
+		}
 		else
-			presenter.setMessage(solution);
+			presenter.setMessage("Not exist solution for " + name + " maze");
 	}
-	
 	
 	/**
 	 * ask from the model the maze with specific name

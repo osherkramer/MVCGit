@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <java version="1.8.0_60" class="java.beans.XMLDecoder">
  <object class="presenter.Properties">
-  <void property="XSize">
-   <int>9</int>
-  </void>
   <void property="YSize">
-   <int>9</int>
+   <int>19</int>
   </void>
   <void property="ZSize">
-   <int>9</int>
+   <int>19</int>
   </void>
   <void property="algorithemForSolution">
-   <string>A* Manhattan Distance</string>
+   <string>BFS</string>
   </void>
   <void property="name">
-   <string>o99</string>
-  </void>
-  <void property="numberOfThreads">
-   <int>9</int>
+   <string>JavaProject</string>
   </void>
  </object>
 </java>

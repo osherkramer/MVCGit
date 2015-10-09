@@ -108,7 +108,11 @@ public class MyModel extends CommonModel {
 	
 	@Override
 	public void getMazeByName(String name){
-		Maze3d maze = hashMaze.get(name);
+		Maze3d maze = null;
+		if(name.length() == 0)
+			maze = hashMaze.get(this.name);
+		else
+			maze = hashMaze.get(name);
 		if(maze == null){
 			setChanged();
 			notifyObservers("Not exist maze by name: " + name);
@@ -124,33 +128,38 @@ public class MyModel extends CommonModel {
 		String[] parm=str.split(" ");
 		boolean isDefault;
 		boolean notStartPositon;
-		if(parm.length != 2 && parm.length != 0 && parm.length != 3){
+		if(parm.length < 1 || parm.length > 3){
 			setChanged();
 			notifyObservers("Done: Invalid Command");
 			return;
 		}
 		
-		Solution<Position> solution;
+		String name = null;
 		if(parm.length == 2)
-			solution = hashSolution.get(hashMaze.get(parm[0]));
+			name = parm[0];
+		else if(parm.length == 1 && !parm[0].equals(""))
+			name = parm[0];
 		else
-			solution = hashSolution.get(name);
+			name = this.name;
+
+		
+		Solution<Position> solution = hashSolution.get(name);
 		
 		if(solution != null){
 			if(parm.length==3){
-				int x = Integer.parseInt(parm[1]);
-				int y = Integer.parseInt(parm[2]);
-				int z = Integer.parseInt(parm[3]);
+				int x = Integer.parseInt(parm[0]);
+				int y = Integer.parseInt(parm[1]);
+				int z = Integer.parseInt(parm[2]);
 				State<Position> newStart = new State<Position>(new Position(x,y,z));
 				if(solution.indexOf(newStart) == solution.toString().split(" ").length-1){
 					setChanged();
-					notifyObservers("Done: solution for " + parm[0] + " is ready");
+					notifyObservers("Done: solution for " + name + " is ready");
 					return;
 				}
 			}
 			else{
 				setChanged();
-				notifyObservers("Done: solution for " + parm[0] + " is ready");
+				notifyObservers("Done: solution for " + name + " is ready");
 				return;
 			}	
 		}
@@ -166,20 +175,15 @@ public class MyModel extends CommonModel {
 		else
 			notStartPositon = false;
 		
+		Maze3d maze = hashMaze.get(name);
+		String string = name;
+		
 		Callable<Solution<Position>> callable = new Callable<Solution<Position>>() {
 
 			@Override
 			public Solution<Position> call() throws Exception {
 				Solution<Position> solution = null;
 				if((isDefault && algorithemForSolution.equals("BFS")) || (!isDefault && parm[1].equalsIgnoreCase("bfs"))){
-					Maze3d maze = null;
-					if(!isDefault)
-						maze = hashMaze.get(parm[0]);
-					else{
-						maze = hashMaze.get(name);
-						System.out.println(maze.getEnter());
-						System.out.println(maze.getExit());
-					}
 					if(maze != null){
 						BFS<Position> bfs = new BFS<Position>();
 						MazeDomain md = new MazeDomain(maze);
@@ -190,9 +194,9 @@ public class MyModel extends CommonModel {
 							md.setStartState(new State<Position>(new Position(x,y,z)));
 						}
 						solution = bfs.search(md);
-						hashSolution.put(hashMaze.get(parm[0]), solution);
+						hashSolution.put(hashMaze.get(string), solution);
 						setChanged();
-						notifyObservers("Done: solution for " + parm[0] + " is ready");
+						notifyObservers("Done: solution for " + string + " is ready");
 					}
 					else{
 						setChanged();
@@ -200,11 +204,6 @@ public class MyModel extends CommonModel {
 					}
 				}
 				else if((isDefault && algorithemForSolution.equals("A* Manhattan Distance")) || (!isDefault && parm[1].equalsIgnoreCase("ManhattanDistance"))){
-					Maze3d maze = null;
-					if(!isDefault)
-						maze = hashMaze.get(parm[0]);
-					else
-						maze = hashMaze.get(name);
 					if(maze != null){
 						AStar<Position> astarManhattanDistance = new AStar<Position>(new MazeManhattanDistance(new State<Position>(maze.getGoalPosition())));
 						MazeDomain md = new MazeDomain(maze);
@@ -215,9 +214,9 @@ public class MyModel extends CommonModel {
 							md.setStartState(new State<Position>(new Position(x,y,z)));
 						}
 						solution = astarManhattanDistance.search(md);
-						hashSolution.put(hashMaze.get(parm[0]), solution);
+						hashSolution.put(hashMaze.get(string), solution);
 						setChanged();
-						notifyObservers("Done: solution for " + parm[0] + " is ready");
+						notifyObservers("Done: solution for " + string + " is ready");
 					}
 					else{
 						setChanged();
@@ -225,11 +224,6 @@ public class MyModel extends CommonModel {
 					}
 				}
 				else if((isDefault && algorithemForSolution.equals("A* Air Distance")) || (!isDefault && parm[1].equalsIgnoreCase("AirDistance"))){
-					Maze3d maze = null;
-					if(!isDefault)
-						maze = hashMaze.get(parm[0]);
-					else
-						maze = hashMaze.get(name);
 					if(maze != null){
 						AStar<Position> astarAirDistance = new AStar<Position>(new MazeAirDistance(new State<Position>(maze.getGoalPosition())));
 						MazeDomain md = new MazeDomain(maze);
@@ -240,9 +234,9 @@ public class MyModel extends CommonModel {
 							md.setStartState(new State<Position>(new Position(x,y,z)));
 						}
 						solution = astarAirDistance.search(md);
-						hashSolution.put(hashMaze.get(parm[0]), solution);
+						hashSolution.put(hashMaze.get(string), solution);
 						setChanged();
-						notifyObservers("Done: solution for " + parm[0] + " is ready");
+						notifyObservers("Done: solution for " + string + " is ready");
 					}
 					else{
 						setChanged();
@@ -262,7 +256,11 @@ public class MyModel extends CommonModel {
 
 	@Override
 	public void crossBy(String by, int index, String name) {
-		Maze3d maze = hashMaze.get(name);
+		Maze3d maze = null;
+		if(name.length() == 0)
+			maze = hashMaze.get(this.name);
+		else
+			maze = hashMaze.get(name);
 		
 		String strMaze ="";
 		int[][] maze2d = null;
@@ -315,17 +313,13 @@ public class MyModel extends CommonModel {
 		}
 		
 		setChanged();
-		notifyObservers(strMaze);
-		
-				
-		
-		
+		notifyObservers(strMaze);		
 	}
 
 	@Override
 	public void saveMaze(String arg) {
 		String[] parm = arg.split(" ");
-		if(parm.length != 3){
+		if(parm.length != 3 && parm.length!=2){
 			setChanged();
 			notifyObservers("Invalid Command");
 			return;
