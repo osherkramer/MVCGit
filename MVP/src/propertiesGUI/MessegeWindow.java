@@ -8,13 +8,18 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-
+/**
+ * MessegeWindow class - extends Widget
+ * Configure the MessegeWindow
+ */
 public class MessegeWindow extends Widget {
 	Shell dialog;
 	Label label;
 	Button okButton;
 	
-
+	/**
+	 * constructor of MessegeWindow
+	 */
 	public MessegeWindow(Widget parent, int style) {
 		super(parent, style);
 		

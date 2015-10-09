@@ -47,6 +47,7 @@ public class MyModel extends CommonModel {
 	int numberOfThreads;
 	String algorithemForSolution;
 	String algorithemForCreate;
+	String name;
 	Properties properties;
 	
 	/**
@@ -63,6 +64,7 @@ public class MyModel extends CommonModel {
 
 	@Override
 	public void generate(String name, int x, int y, int z) {
+		this.name = name;
 		Callable<Maze3d> callable = new Callable<Maze3d>() {
 
 			@Override
@@ -83,7 +85,7 @@ public class MyModel extends CommonModel {
 		
 	}
 	
-	public void generate(String name) {
+	public void generate() {
 		Callable<Maze3d> callable = new Callable<Maze3d>() {
 
 			@Override
@@ -122,18 +124,35 @@ public class MyModel extends CommonModel {
 		String[] parm=str.split(" ");
 		boolean isDefault;
 		boolean notStartPositon;
-		if(parm.length != 2 && parm.length != 1 && parm.length != 4){
+		if(parm.length != 2 && parm.length != 0 && parm.length != 3){
 			setChanged();
 			notifyObservers("Done: Invalid Command");
 			return;
 		}
 		
-		Solution<Position> solution = hashSolution.get(hashMaze.get(parm[0]));
+		Solution<Position> solution;
+		if(parm.length == 2)
+			solution = hashSolution.get(hashMaze.get(parm[0]));
+		else
+			solution = hashSolution.get(name);
 		
 		if(solution != null){
-			setChanged();
-			notifyObservers("Done: solution for " + parm[0] + " is ready");
-			return;
+			if(parm.length==3){
+				int x = Integer.parseInt(parm[1]);
+				int y = Integer.parseInt(parm[2]);
+				int z = Integer.parseInt(parm[3]);
+				State<Position> newStart = new State<Position>(new Position(x,y,z));
+				if(solution.indexOf(newStart) == solution.toString().split(" ").length-1){
+					setChanged();
+					notifyObservers("Done: solution for " + parm[0] + " is ready");
+					return;
+				}
+			}
+			else{
+				setChanged();
+				notifyObservers("Done: solution for " + parm[0] + " is ready");
+				return;
+			}	
 		}
 		
 		if(parm.length == 2)
@@ -141,7 +160,7 @@ public class MyModel extends CommonModel {
 		else
 			isDefault = true;
 
-		if(parm.length == 4){
+		if(parm.length == 3){
 			notStartPositon = true;
 		}
 		else
@@ -153,14 +172,21 @@ public class MyModel extends CommonModel {
 			public Solution<Position> call() throws Exception {
 				Solution<Position> solution = null;
 				if((isDefault && algorithemForSolution.equals("BFS")) || (!isDefault && parm[1].equalsIgnoreCase("bfs"))){
-					Maze3d maze = hashMaze.get(parm[0]);
+					Maze3d maze = null;
+					if(!isDefault)
+						maze = hashMaze.get(parm[0]);
+					else{
+						maze = hashMaze.get(name);
+						System.out.println(maze.getEnter());
+						System.out.println(maze.getExit());
+					}
 					if(maze != null){
 						BFS<Position> bfs = new BFS<Position>();
 						MazeDomain md = new MazeDomain(maze);
 						if(notStartPositon){
-							int x = Integer.parseInt(parm[1]);
-							int y = Integer.parseInt(parm[2]);
-							int z = Integer.parseInt(parm[3]);
+							int x = Integer.parseInt(parm[0]);
+							int y = Integer.parseInt(parm[1]);
+							int z = Integer.parseInt(parm[2]);
 							md.setStartState(new State<Position>(new Position(x,y,z)));
 						}
 						solution = bfs.search(md);
@@ -174,14 +200,18 @@ public class MyModel extends CommonModel {
 					}
 				}
 				else if((isDefault && algorithemForSolution.equals("A* Manhattan Distance")) || (!isDefault && parm[1].equalsIgnoreCase("ManhattanDistance"))){
-					Maze3d maze = hashMaze.get(parm[0]);
+					Maze3d maze = null;
+					if(!isDefault)
+						maze = hashMaze.get(parm[0]);
+					else
+						maze = hashMaze.get(name);
 					if(maze != null){
 						AStar<Position> astarManhattanDistance = new AStar<Position>(new MazeManhattanDistance(new State<Position>(maze.getGoalPosition())));
 						MazeDomain md = new MazeDomain(maze);
 						if(notStartPositon){
-							int x = Integer.parseInt(parm[1]);
-							int y = Integer.parseInt(parm[2]);
-							int z = Integer.parseInt(parm[3]);
+							int x = Integer.parseInt(parm[0]);
+							int y = Integer.parseInt(parm[1]);
+							int z = Integer.parseInt(parm[2]);
 							md.setStartState(new State<Position>(new Position(x,y,z)));
 						}
 						solution = astarManhattanDistance.search(md);
@@ -195,14 +225,18 @@ public class MyModel extends CommonModel {
 					}
 				}
 				else if((isDefault && algorithemForSolution.equals("A* Air Distance")) || (!isDefault && parm[1].equalsIgnoreCase("AirDistance"))){
-					Maze3d maze = hashMaze.get(parm[0]);
+					Maze3d maze = null;
+					if(!isDefault)
+						maze = hashMaze.get(parm[0]);
+					else
+						maze = hashMaze.get(name);
 					if(maze != null){
 						AStar<Position> astarAirDistance = new AStar<Position>(new MazeAirDistance(new State<Position>(maze.getGoalPosition())));
 						MazeDomain md = new MazeDomain(maze);
 						if(notStartPositon){
-							int x = Integer.parseInt(parm[1]);
-							int y = Integer.parseInt(parm[2]);
-							int z = Integer.parseInt(parm[3]);
+							int x = Integer.parseInt(parm[0]);
+							int y = Integer.parseInt(parm[1]);
+							int z = Integer.parseInt(parm[2]);
 							md.setStartState(new State<Position>(new Position(x,y,z)));
 						}
 						solution = astarAirDistance.search(md);
@@ -475,7 +509,9 @@ public class MyModel extends CommonModel {
 			notifyObservers(e.getMessage());
 		}		
 	}
-	
+	/**
+	 * loat data from zip
+	 */
 	@SuppressWarnings("unchecked")
 	public void load() {
 		FileInputStream fileSolutions;
@@ -522,18 +558,41 @@ public class MyModel extends CommonModel {
 	public void setAlgorithemForCreate(String algorithemForCreate) {
 		this.algorithemForCreate = algorithemForCreate;
 	}
-		
+	/**
+	 * return the number of threads
+	 * @return -int
+	 */	
 	public int getNumberOfThreads() {
 		return numberOfThreads;
 	}
-
+	/**
+	 * set the number of threads
+	 * @param -int
+	 */	
 	public void setNumberOfThreads(int numberOfThreads) {
 		this.numberOfThreads = numberOfThreads;
+	}
+	/**
+	 * get the name of the maze
+	 * @return String name
+	 */
+
+	public String getName() {
+		return name;
+	}
+	/**
+	 * set the name of the maze
+	 * @param String name
+	 */
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setProperties(Properties properties) {
 		this.properties = properties;
 		
+		setName(properties.getName());		
 		setxSize(properties.getXSize());
 		setySize(properties.getYSize());
 		setzSize(properties.getZSize());
@@ -543,6 +602,4 @@ public class MyModel extends CommonModel {
 		threadpool = Executors.newFixedThreadPool(numberOfThreads);
 		
 	}
-	
-	
 }

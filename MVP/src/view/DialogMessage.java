@@ -1,4 +1,4 @@
-package propertiesGUI;
+package view;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -10,29 +10,34 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 /**
- * DialogMessage class - extends Dialog
- * Configure the dialog message box
+ * DialogMessage - extends Dialog
  */
 public class DialogMessage extends Dialog {
 	Object result;
 	String messege;
-	/**
-	 * constructor of dialog message
-	 */
+    /**
+     * DialogMessage constructor
+     * @param parent
+     * @param style
+     * @param messege
+     */
     public DialogMessage (Shell parent, int style, String messege) {
     	super (parent, style);
         this.messege = messege;
     }
     /**
-	 * constructor of dialog message
-	 */
+     * DialogMessage constructor
+     * @param parent
+     * @param style
+     * @param messege
+     */
     public DialogMessage (Shell parent, String messege) {
     	super (parent, 0);
         this.messege = messege;
     }
     /**
-	 * open the dialog message
-	 */
+     * open the dialog
+     */
     public Object open () {
         Shell parent = getParent();
         Shell shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);

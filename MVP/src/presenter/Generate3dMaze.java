@@ -34,8 +34,8 @@ public class Generate3dMaze extends CommonCommand {
 			presenter.getModel().generate(parm[2], x, y, z);
 			
 		}
-		else if(parm.length == 3){
-			presenter.getModel().generate(parm[2]);
+		else if(parm.length == 2){
+			presenter.getModel().generate();
 		}
 		else
 			presenter.setMessage("Invalid Command");

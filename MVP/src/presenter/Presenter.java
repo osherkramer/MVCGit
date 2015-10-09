@@ -8,6 +8,10 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import model.Model;
 import view.View;
+/**
+ *Presenter  class - implements the Observer
+ * manage the communication between model and view
+ */
 
 public class Presenter  implements Observer{
 	
@@ -41,19 +45,35 @@ public class Presenter  implements Observer{
 		
 		view.setCommands(hash);
 	}
-
+	/**
+	 * set message and sent it to the view
+	 * @param -String message
+	 */	
 	public void setMessage(String message) {
 		this.view.displayMessage(message);
 
 	}
+	/**
+	 * set message and sent it to the view
+	 * @param -Solution sol
+	 */	
 	public void setMessage(Solution<Position> sol) {
 		this.view.displaySolution(sol);
 
 	}
+	/**
+	 * get the model
+	 * @return -Model model
+	 */	
 	public Model getModel(){ return model; }
-	
+	/**
+	 * get the view
+	 * @return -View view
+	 */	
 	public View getView(){ return view; }
-
+	/**
+	 * update that change as occur
+	 */	
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o == view){

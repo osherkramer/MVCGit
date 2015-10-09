@@ -24,9 +24,15 @@ public interface View {
 	 * @param message - get string to view for the client
 	 */
 	void displayMessage(String message);
-	
+	/**
+	 * display the maze
+	 * @param maze - get Maze3d to view for the client
+	 */
 	void displayMaze(Maze3d maze);
-	
+	/**
+	 * display the solution
+	 * @param sol - get Maze3d to view for the client
+	 */
 	void displaySolution(Solution<Position> sol);
 	
 	/**
@@ -39,10 +45,19 @@ public interface View {
 	 * exit from the view - close threads and the view
 	 */
 	void exit();
-	
+	/**
+	 * notify message by String[] 
+	 * @param str
+	 */
 	void notifyMessage(String[] str);
-	
+	/**
+	 * notify message by String 
+	 * @param str
+	 */
 	void notifyMessage(String str);
-
+	/**
+	 * notify message by properties 
+	 * @param properties
+	 */
 	void notifyMessage(Properties properties);
 }

@@ -21,27 +21,37 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import presenter.Command;
 import presenter.Properties;
-import propertiesGUI.BasicWindow;
-import propertiesGUI.DialogMessage;
-
+import view.BasicWindow;
+import view.DialogMessage;
+/**
+ * GUI Class - manage the graphic Line Interface for the client
+ */
 public class GUI extends BasicWindow implements UserInterface {
 	View view;
 	HashMap<String, Command> hashCommand;
 	DisplayMaze3D mazeDisplay;
 	int numberMaze;
 
+	/**
+	 * constructor for GUI
+	 * @param title
+	 * @param width
+	 * @param height
+	 */
 	public GUI(String title, int width, int height) {
 		super(title, width, height);
 		numberMaze=0;
 	}
-
+	/**
+	 * Configure the gui widgets
+	 */
 	@Override
 	public void initWidgets() {
 		shell.setLayout(new GridLayout(3, false));
 
 		Menu menuBar, fileMenu, gameMenu;
 		MenuItem fileMenuHeader, gameMenuHeader, generateItem,
-			solveItem, openPropertiesItem, exitItem;
+			solveItem, stopSolveItem, openPropertiesItem, exitItem;
 		
 		menuBar = new Menu(shell,SWT.BAR);
 		fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
@@ -69,28 +79,32 @@ public class GUI extends BasicWindow implements UserInterface {
 		solveItem = new MenuItem(gameMenu, SWT.PUSH);
 		solveItem.setText("&Solve maze");
 		
+		stopSolveItem = new MenuItem(gameMenu, SWT.PUSH);
+		stopSolveItem.setText("&Stop solve");
+		
 		shell.setMenuBar(menuBar);
 				
 		mazeDisplay = new DisplayMaze3D(shell, SWT.BORDER);
 		mazeDisplay.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 7));
-		view.notifyMessage(("generate 3d maze f13").split(" ",2));
+		view.notifyMessage(("generate 3d maze").split(" ",2));
 		mazeDisplay.draw();
-
+		GUI g=this;
 		Listener generateListenert = new Listener() {
-			
 			@Override
 			public void handleEvent(Event arg0) {
-				view.notifyMessage("generate 3d maze f13".split(" ",2));
-				mazeDisplay.redraw();
+				mazeDisplay.newSolve(false);
+				GeneratWindow gw = new GeneratWindow(g,shell, 50, 50);
+				gw.open();
 			}
+			
 		};
 		
 		Listener exitListener = new Listener() {
 			
 			@Override
 			public void handleEvent(Event arg0) {
-				view.notifyMessage("exit");
 				mazeDisplay.setRunning(false);
+				view.notifyMessage("exit");
 				shell.dispose();
 			}
 		};
@@ -104,7 +118,6 @@ public class GUI extends BasicWindow implements UserInterface {
 		        try {
 					fd.setFilterPath(new java.io.File( "." ).getCanonicalPath());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		        String[] filterExt = { "*.xml" };
@@ -130,9 +143,16 @@ public class GUI extends BasicWindow implements UserInterface {
 			
 			@Override
 			public void handleEvent(Event arg0) {
-				view.notifyMessage(("solve f13 " + mazeDisplay.getCharacterX() + " "
+				view.notifyMessage(("solve " + mazeDisplay.getCharacterX() + " "
 						+ mazeDisplay.getCharacterY() + " " +
 						mazeDisplay.getCharacterZ()).split(" ", 2));			
+			}
+		};
+		
+		Listener stopSolveListtener = new Listener(){
+			@Override
+			public void handleEvent(Event arg0) {
+				mazeDisplay.newSolve(false);			
 			}
 		};
 		
@@ -141,6 +161,7 @@ public class GUI extends BasicWindow implements UserInterface {
 		generateItem.addListener(SWT.Selection, generateListenert);
 		openPropertiesItem.addListener(SWT.Selection, propertiesListener);
 		solveItem.addListener(SWT.Selection, solveListtener);
+		stopSolveItem.addListener(SWT.Selection, stopSolveListtener);
 		shell.addKeyListener(new KeyListener() {
 			
 			@Override
@@ -148,27 +169,28 @@ public class GUI extends BasicWindow implements UserInterface {
 			
 			@Override
 			public void keyPressed(KeyEvent key) {
-				switch(key.keyCode)
-				{
-				case SWT.ARROW_DOWN:
-					mazeDisplay.moveBack();
-					break;
-				case SWT.ARROW_UP:
-					mazeDisplay.moveForward();
-					break;
-				case SWT.ARROW_LEFT:
-					mazeDisplay.moveLeft();
-					break;
-				case SWT.ARROW_RIGHT:
-					mazeDisplay.moveRight();
-					break;
-				case SWT.PAGE_UP:
-					mazeDisplay.moveUp();
-					break;
-				case SWT.PAGE_DOWN:
-					mazeDisplay.moveDown();
-					break;
-				}	
+				if(!mazeDisplay.isSolving())
+					switch(key.keyCode)
+					{
+					case SWT.ARROW_DOWN:
+						mazeDisplay.moveBack();
+						break;
+					case SWT.ARROW_UP:
+						mazeDisplay.moveForward();
+						break;
+					case SWT.ARROW_LEFT:
+						mazeDisplay.moveLeft();
+						break;
+					case SWT.ARROW_RIGHT:
+						mazeDisplay.moveRight();
+						break;
+					case SWT.PAGE_UP:
+						mazeDisplay.moveUp();
+						break;
+					case SWT.PAGE_DOWN:
+						mazeDisplay.moveDown();
+						break;
+					}	
 			}
 		});
 
@@ -206,6 +228,13 @@ public class GUI extends BasicWindow implements UserInterface {
 	public void displaySolution(Solution<Position> sol)
 	{
 		mazeDisplay.displaySolution(sol);		
+	}
+	public void notifyMessage(String[] str) {
+		view.notifyMessage(str);
+		
+	}
+	public void redraw() {
+		mazeDisplay.redraw();	
 	}
 
 }

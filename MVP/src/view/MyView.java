@@ -15,7 +15,10 @@ import presenter.Properties;
 public class MyView extends CommonView {
 	
 	Thread mainThread;
-	
+	/**
+	 * constructor for GUI
+	 * @param ui
+	 */
 	public MyView(UserInterface ui) {
 		super(ui);
 		ui.setView(this);
@@ -57,8 +60,12 @@ public class MyView extends CommonView {
 	public void displayMaze(Maze3d maze){
 		ui.displayMaze(maze);	
 	}
+	/**
+	 * display the solution
+	 * @param sol
+	 */
 	@Override
-	public void displaySolution(Solution<Position> sol)
+    public void displaySolution(Solution<Position> sol)
 	{
 		ui.displaySolution(sol);
 	}

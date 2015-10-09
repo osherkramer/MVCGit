@@ -75,7 +75,7 @@ public class CLI implements UserInterface{
 
 	@Override
 	public void setRunning(boolean running){ this.running = running; }
-	
+	@Override
 	public void displaySolution(Solution<Position> sol)
 	{
 		out.println(sol.toString());

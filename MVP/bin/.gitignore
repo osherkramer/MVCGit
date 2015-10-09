@@ -1,5 +1,5 @@
-/model/
-/view/
-/presenter/
 /boot/
+/model/
+/presenter/
 /propertiesGUI/
+/view/

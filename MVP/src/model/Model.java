@@ -72,22 +72,46 @@ public interface Model {
 	 * @param name - get name of maze
 	 */
 	void mazeSizeFile(String name);
-
+	/**
+	 * exit safely for the program
+	 */
 	void exit();
-	
+	/**
+	 * save the current data
+	 */
 	void save();
-	
+	/**
+	 * set the x size
+	 * @param -int x size
+	 */
 	void setxSize(int xSize);
-
+	/**
+	 * set the y size
+	 * @param -int y size
+	 */
 	void setySize(int ySize);
-
+	/**
+	 * set the z size
+	 * @param -int z size
+	 */
 	void setzSize(int zSize);
-
+	/**
+	 * set the algorithm for the Solution
+	 * @param -String algorithm name
+	 */
 	void setAlgorithemForSolution(String algorithemForSolution);
-
+	/**
+	 * set the algorithm for the Create
+	 * @param -String algorithm name
+	 */
 	void setAlgorithemForCreate(String algorithemForCreate);
-	
-	void generate(String name);
-	
+	/**
+	 * generate new maze
+	 */
+	void generate();
+	/**
+	 * set the properties for the maze
+	 * @param -Properties properties
+	 */
 	void setProperties(Properties properties);
 }

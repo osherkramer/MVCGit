@@ -17,7 +17,9 @@ import presenter.Properties;
 public abstract class CommonView extends Observable implements View {
 	UserInterface ui;
 	HashMap<String,Command> hashCommand;	
-	
+	/**
+	 * constructor of common view
+	 */
 	public CommonView(UserInterface ui) {
 		this.ui = ui;
 	}

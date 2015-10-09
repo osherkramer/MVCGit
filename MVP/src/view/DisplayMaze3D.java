@@ -11,7 +11,10 @@ import org.eclipse.swt.widgets.Composite;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
-
+/**
+ * DisplayMaze3D calss - extends DisplayMaze
+ *
+ */
 
 public class DisplayMaze3D extends DisplayMaze {
 	
@@ -24,17 +27,27 @@ public class DisplayMaze3D extends DisplayMaze {
 	int exitZ;
 	boolean running;
 	ExecutorService threadSolve;
-
+	Thread solve;
+	Thread run;
+	 /**
+     * DisplayMaze3D constructor
+     */
 	public DisplayMaze3D(Composite parent, int style) {
 		super(parent, style);
-		running = true;
+		running = false;
 		threadSolve = Executors.newFixedThreadPool(1);
 	}	
-	
+	/**
+     * get the maze
+     * @return maze-the maze
+     */
 	public Maze3d getMaze() {
 		return maze;
 	}
-
+	/**
+     * set the maze
+     * @param maze-the maze
+     */
 	public void setMaze(Maze3d maze) {
 		this.maze = maze;
 		characterX = maze.getEnter().getX();
@@ -46,7 +59,9 @@ public class DisplayMaze3D extends DisplayMaze {
 		exitZ = maze.getExit().getZ();
 	}
 
-
+     /**
+      * draw the maze 3d and the character
+      */
 	public void draw(){
 		Image image = new Image(getDisplay(), "resources/wall.jpg");
 		Image charachter = new Image(getDisplay(), "resources/Stewie_Griffin.png");
@@ -95,7 +110,12 @@ public class DisplayMaze3D extends DisplayMaze {
 				  
 		});
 	}
-	
+	/**
+	 * move the character
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	private void moveCharacter(int x,int y, int z){
 		if(characterX == exitX && characterZ == exitZ && characterY == exitY)
       	  return;
@@ -104,15 +124,16 @@ public class DisplayMaze3D extends DisplayMaze {
 			characterX=x;
 			characterY=y;
 			characterZ=z;
-			
-				
-			getDisplay().syncExec(new Runnable() {
+
+			run=new Thread(new Runnable() {
 				
 				@Override
 				public void run() {
 					redraw();
 				}
 			});
+			getDisplay().syncExec(run);
+		
 		}
 	}
 
@@ -169,52 +190,87 @@ public class DisplayMaze3D extends DisplayMaze {
 		
 		moveCharacter(x, y, z);
 	}
-	
+	/**
+	 * display the solution
+	 * @param sol-the Solution for display
+	 */
 	public void displaySolution(Solution<Position> sol)
 	{
 		this.running = true;
-		threadSolve.execute(new Runnable() {
+		solve=new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
+				while(running)
+				{
 				String[] position=sol.toString().split(" ");
 				int x,y,z;
-			
 				for(int i=position.length-1; running && i>=0; i--)
 				{
 					String[] numbers = position[i].split(",");
 					x=Integer.parseInt(numbers[0].substring(1));
 					y=Integer.parseInt(numbers[1]);
 					z=Integer.parseInt(numbers[2].substring(0, numbers[2].length()-1));
-					moveCharacter(x,y,z);
+					  moveCharacter(x,y,z);
 					try {
 						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					} catch (InterruptedException e) {}
+				}
 				}
 			}
 		});
+		threadSolve.execute(solve);
 	}
 	
+	/**
+	 * set the running
+	 * @param running-the running
+	 */
 	public void setRunning(boolean running){ 
-		this.running = running;
-		if(!running)
-			threadSolve.shutdown();
 		
+		if(!running)
+		{
+			this.running=running;
+			if(run != null)
+				while(run.isAlive());
+			threadSolve.shutdown();
+		}
 	}
-
+	/**
+	 * set that new solve is occur
+	 * @param running
+	 */
+	public void newSolve(boolean running){ 
+		
+		if(!running)
+			this.running=running;
+	}
+	/**
+	 * get the x of character
+	 * @return characterX-the x
+	 */
 	public int getCharacterX() {
 		return characterX;
 	}
-
+	/**
+	 * get the y of character
+	 * @return characterY-the y
+	 */
 	public int getCharacterY() {
 		return characterY;
 	}
-
+	/**
+	 * get the z of character
+	 * @return characterZ-the z
+	 */
 	public int getCharacterZ() {
 		return characterZ;
 	}
+	/**
+	 * return if thread for solve is in progress
+	 * @return boolean running
+	 */
+	public boolean isSolving() { return running; }
 	
 }
 

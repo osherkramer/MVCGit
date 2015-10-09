@@ -2,7 +2,10 @@ package propertiesGUI;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
+/**
+ * BasicWindow class - implements Runnable
+ * create the basic window
+ */
 public abstract class BasicWindow implements Runnable {
 	
 	protected Display display;
@@ -16,6 +19,9 @@ public abstract class BasicWindow implements Runnable {
 		
 	}
 	
+	/**
+	 * Configure the window widgets
+	 */
 	public abstract void initWidgets();
 
 	@Override
